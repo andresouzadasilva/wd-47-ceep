@@ -29,6 +29,9 @@ body {
 #mudaLayout {
     display: none;
 }
+.span-destaque {
+    background-color: #00FFFF;
+}
 @media(min-width: 560px) {
     #mudaLayout {
         display: inline-block;
