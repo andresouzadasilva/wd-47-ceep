@@ -1,3 +1,6 @@
+//criando o contador
+var contador = $(".cartao").length;
+
 document.querySelector("#mudaLayout").addEventListener("click", function() {
     var mural = document.querySelector(".mural");
     mural.classList.toggle("mural--linhas");
@@ -42,25 +45,75 @@ $("#busca").on("input", function() {
     }).show();
 });
 
-// REMOVER CARTAO CLOSURE
-function removeCartaoClosure(x) {
-    // console.log('1 - ' + x);
-    return function() {
-        // console.log('2 - ' + x);
-        var cartao = document.querySelector("#"+this.dataset.ref);
-        cartao.classList.add("cartao--some");
-        // DESAFIO: Exercicio 5.4
-        // var botao = $(this);
-        // var cartao = botao.closest("div.cartao");
-        // cartao.addClass("cartao--some");
-        setTimeout(function() {
-            cartao.remove();
-        }, 400);
-    };
+$(".novoCartao-conteudo").blur(function(event) {
+    var botaoSalvar = $("input.novoCartao-salvar");
+    if (event.relatedTarget == botaoSalvar[0]) {
+        $(".novoCartao").submit();
+    }
+});
+
+$(".novoCartao").submit(function(event){
+    console.log("submit");
+    //impede que a página recarregue
+    event.preventDefault();
+    
+    //pega o que o usuário digitou
+    var campoConteudo = $(".novoCartao-conteudo");
+    var conteudo = campoConteudo.val().trim();
+
+    //cria os elementos do cartão e adiciona no DOM
+    if (conteudo){
+        contador++;
+
+        //cria o botão de remover
+        var botaoRemove = $("<button>")
+                            .addClass("opcoesDoCartao-remove opcoesDoCartao-opcao")
+                            .attr("data-ref", "cartao_" + contador)
+                            .text("Remover")
+                            .click(removeCartao);
+
+        //cria a div de opcoes
+        var opcoes = $("<div>").addClass("opcoesDoCartao").append(botaoRemove);
+        var conteudoTag = $("<p>").addClass("cartao-conteudo")
+                                    .append(conteudo);
+        $("<div>").attr("id","cartao_" + contador)
+                    .addClass("cartao")
+                    .append(opcoes)
+                    .append(conteudoTag)
+                    .prependTo(".mural");
+    }
+    //apaga o conteúdo do textarea
+    campoConteudo.val("");
+});
+
+// REMOVER CARTAO NORMAL
+function removeCartao() {
+    var cartao = document.querySelector("#"+this.dataset.ref);
+    cartao.classList.add("cartao--some");
+    setTimeout(function() {
+        cartao.remove();
+    }, 400);
 }
+
+// REMOVER CARTAO CLOSURE
+// function removeCartaoClosure(x) {
+//     // console.log('1 - ' + x);
+//     return function() {
+//         // console.log('2 - ' + x);
+//         var cartao = document.querySelector("#"+this.dataset.ref);
+//         cartao.classList.add("cartao--some");
+//         // DESAFIO: Exercicio 5.4
+//         // var botao = $(this);
+//         // var cartao = botao.closest("div.cartao");
+//         // cartao.addClass("cartao--some");
+//         setTimeout(function() {
+//             cartao.remove();
+//         }, 400);
+//     };
+// }
 var botoes = document.querySelectorAll(".opcoesDoCartao-remove");
 for (var i=0; i<botoes.length; i++) {
-    botoes[i].addEventListener("click", removeCartaoClosure(i));
+    botoes[i].addEventListener("click", removeCartao);
 }
 
 // REMOVER CARTAO IIFE - Self Executing Funtion
